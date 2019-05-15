@@ -245,7 +245,7 @@ function twentythirteen_fonts_url() {
 		$query_args = array(
 			'family'  => urlencode( implode( '|', $font_families ) ),
 			'subset'  => urlencode( 'latin,latin-ext' ),
-			'display' => urlencode( 'swap' ),
+			'display' => urlencode( 'fallback' ),
 		);
 		$fonts_url  = add_query_arg( $query_args, 'https://fonts.googleapis.com/css' );
 	}

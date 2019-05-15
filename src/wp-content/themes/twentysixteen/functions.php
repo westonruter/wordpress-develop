@@ -333,7 +333,7 @@ if ( ! function_exists( 'twentysixteen_fonts_url' ) ) :
 				array(
 					'family'  => urlencode( implode( '|', $fonts ) ),
 					'subset'  => urlencode( $subsets ),
-					'display' => urlencode( 'swap' ),
+					'display' => urlencode( 'fallback' ),
 				),
 				'https://fonts.googleapis.com/css'
 			);
