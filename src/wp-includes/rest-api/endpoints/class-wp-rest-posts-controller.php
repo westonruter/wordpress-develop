@@ -662,6 +662,12 @@ class WP_REST_Posts_Controller extends WP_REST_Controller {
 			return new WP_Error( 'rest_cannot_assign_term', __( 'Sorry, you are not allowed to assign the provided terms.' ), array( 'status' => rest_authorization_required_code() ) );
 		}
 
+		// Allow a client to guard against overwriting changes to a post by sending the If-Unmodified-Since request header.
+		$if_unmodified_since = $request->get_header( 'If-Unmodified-Since' );
+		if ( $if_unmodified_since && mysql2date( 'U', $post->post_modified_gmt ) > strtotime( $if_unmodified_since ) ) {
+			return new WP_Error( 'rest_precondition_failed', __( 'Sorry, the post has been modified on the server since you started editing it. Conflict resolution is required.' ), array( 'status' => 412 ) );
+		}
+
 		return true;
 	}
 
