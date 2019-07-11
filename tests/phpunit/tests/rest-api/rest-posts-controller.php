@@ -3252,7 +3252,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 	 * @return string Date formatted as RFC.
 	 */
 	protected function format_gmt_date_as_rfc( $date_str, $seconds_offset = 0 ) {
-		$timestamp = mysql2date( 'U', $date_str );
+		$timestamp  = mysql2date( 'U', $date_str );
 		$timestamp += $seconds_offset;
 		return str_replace( '+0000', 'GMT', gmdate( 'r', $timestamp ) );
 	}
@@ -3284,7 +3284,7 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		// Test updating post with If-Unmodified-Since header being in the future of post_modified_gmt.
 		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', self::$post_id ) );
 		$request->add_header( 'content-type', 'application/json' );
-		$title2  = '1 second after last modified';
+		$title2 = '1 second after last modified';
 		$request->set_body( wp_json_encode( $this->set_post_data( array( 'title' => $title2 ) ) ) );
 		$request->set_header(
 			'If-Unmodified-Since',
