@@ -3563,6 +3563,72 @@ class WP_Test_REST_Posts_Controller extends WP_Test_REST_Post_Type_Controller_Te
 		$this->assertEquals( 'post-my-invalid-template.php', $data['template'] );
 	}
 
+	/**
+	 * Format MySQL date string as RFC.
+	 *
+	 * @param string $date           Date string (YYYY-MM-DD HH:MM:SS).
+	 * @param int    $seconds_offset Number of seconds to add/subtract from the date.
+	 * @return string Date formatted as RFC.
+	 */
+	protected function format_gmt_date_as_rfc( $date_str, $seconds_offset = 0 ) {
+		$timestamp  = mysql2date( 'U', $date_str );
+		$timestamp += $seconds_offset;
+		return str_replace( '+0000', 'GMT', gmdate( 'r', $timestamp ) );
+	}
+
+	/**
+	 * Test If-Unmodified-Since request header when updating posts.
+	 *
+	 * @covers WP_REST_Posts_Controller::update_item_permissions_check()
+	 * @ticket 47676
+	 */
+	public function test_update_item_with_if_unmodified_since_precondition() {
+		wp_set_current_user( self::$editor_id );
+
+		// Test updating post with If-Unmodified-Since header matching the post_modified_gmt.
+		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', self::$post_id ) );
+		$request->add_header( 'content-type', 'application/json' );
+		$title1 = 'Same as last modified';
+		$request->set_body( wp_json_encode( $this->set_post_data( array( 'title' => $title1 ) ) ) );
+		$request->set_header(
+			'If-Unmodified-Since',
+			$this->format_gmt_date_as_rfc( get_post( self::$post_id )->post_modified_gmt )
+		);
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertSame( 200, $response->get_status() );
+		$new_data = $response->get_data();
+		$this->assertSame( $title1, $new_data['title']['raw'] );
+		$this->assertSame( $title1, get_post( self::$post_id )->post_title );
+
+		// Test updating post with If-Unmodified-Since header being in the future of post_modified_gmt.
+		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', self::$post_id ) );
+		$request->add_header( 'content-type', 'application/json' );
+		$title2 = '1 second after last modified';
+		$request->set_body( wp_json_encode( $this->set_post_data( array( 'title' => $title2 ) ) ) );
+		$request->set_header(
+			'If-Unmodified-Since',
+			$this->format_gmt_date_as_rfc( get_post( self::$post_id )->post_modified_gmt, 1 )
+		);
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertSame( 200, $response->get_status() );
+		$new_data = $response->get_data();
+		$this->assertSame( $title2, $new_data['title']['raw'] );
+		$this->assertSame( $title2, get_post( self::$post_id )->post_title );
+
+		// Test updating post with If-Unmodified-Since header being in the past of post_modified_gmt, thus failing the precondition.
+		$request = new WP_REST_Request( 'PUT', sprintf( '/wp/v2/posts/%d', self::$post_id ) );
+		$request->add_header( 'content-type', 'application/json' );
+		$title3 = '1 second before last modified';
+		$request->set_body( wp_json_encode( $this->set_post_data( array( 'title' => $title3 ) ) ) );
+		$request->set_header(
+			'If-Unmodified-Since',
+			$this->format_gmt_date_as_rfc( get_post( self::$post_id )->post_modified_gmt, -1 )
+		);
+		$response = rest_get_server()->dispatch( $request );
+		$this->assertSame( 412, $response->get_status() );
+		$this->assertSame( $title2, get_post( self::$post_id )->post_title, 'Expected third title to not update due to failed precondition.' );
+	}
+
 	public function verify_post_roundtrip( $input = array(), $expected_output = array() ) {
 		// Create the post
 		$request = new WP_REST_Request( 'POST', '/wp/v2/posts' );
