@@ -37,7 +37,6 @@ module.exports = ( env = { buildTarget: 'src/' } ) => {
 		externals: {
 			'csslint': 'window.CSSLint',
 			'htmlhint': 'window.HTMLHint',
-			'jshint': 'window.JSHINT',
 			'jsonlint': 'window.jsonlint',
 		},
 		plugins: [
