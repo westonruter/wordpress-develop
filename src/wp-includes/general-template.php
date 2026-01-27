@@ -4045,6 +4045,7 @@ function wp_enqueue_code_editor( $args ) {
 
 	wp_enqueue_script( 'code-editor' );
 	wp_enqueue_style( 'code-editor' );
+	wp_enqueue_script_module( 'wp-codemirror' ); // Hack to get importmap printed with espree.
 
 	if ( isset( $settings['codemirror']['mode'] ) ) {
 		$mode = $settings['codemirror']['mode'];
@@ -4069,7 +4070,6 @@ function wp_enqueue_code_editor( $args ) {
 				case 'text/x-php':
 					wp_enqueue_script( 'htmlhint' );
 					wp_enqueue_script( 'csslint' );
-					wp_enqueue_script( 'jshint' );
 					if ( ! current_user_can( 'unfiltered_html' ) ) {
 						wp_enqueue_script( 'htmlhint-kses' );
 					}
@@ -4081,7 +4081,6 @@ function wp_enqueue_code_editor( $args ) {
 				case 'application/ld+json':
 				case 'text/typescript':
 				case 'application/typescript':
-					wp_enqueue_script( 'jshint' );
 					wp_enqueue_script( 'jsonlint' );
 					break;
 			}

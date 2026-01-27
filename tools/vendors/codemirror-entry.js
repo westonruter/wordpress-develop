@@ -20,7 +20,7 @@ require( 'codemirror/addon/lint/lint' );
 require( 'codemirror/addon/lint/css-lint' );
 require( 'codemirror/addon/lint/html-lint' );
 
-require( '../../src/js/_enqueues/vendor/codemirror/javascript-lint' ); // TODO: Change to our own version which uses Espree. No need for fakejshint.js at all then.
+require( '../../src/js/_enqueues/vendor/codemirror/javascript-lint' );
 require( 'codemirror/addon/lint/json-lint' );
 
 // Addons (Other)
