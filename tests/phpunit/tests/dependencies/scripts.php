@@ -3835,7 +3835,6 @@ HTML;
 			'csslint'                          => array( 'csslint' ),
 			'element-closest'                  => array( 'element-closest', 'wp-polyfill-element-closest' ),
 			'esprima'                          => array( 'esprima' ),
-			'espree'                           => array( 'espree' ),
 			'formdata-polyfill'                => array( 'formdata-polyfill', 'wp-polyfill-formdata' ),
 			'imagesloaded'                     => array( 'imagesloaded' ),
 			'jquery-color'                     => array( 'jquery-color' ),
@@ -3894,7 +3893,7 @@ HTML;
 		);
 
 		// Exclude packages that are not registered in WordPress.
-		$exclude                   = array( 'react-is', 'json2php' );
+		$exclude                   = array( 'react-is', 'json2php', 'espree' );
 		$package_json_dependencies = array_diff( $package_json_dependencies, $exclude );
 
 		/*

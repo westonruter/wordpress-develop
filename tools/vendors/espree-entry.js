@@ -1,2 +1,1 @@
-/* jshint node:true */
-window.espree = require( 'espree' );
+export * from 'espree';
