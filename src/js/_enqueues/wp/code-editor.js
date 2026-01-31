@@ -2,6 +2,8 @@
  * @output wp-admin/js/code-editor.js
  */
 
+/* eslint-env es6 */
+
 if ( 'undefined' === typeof window.wp ) {
 	/**
 	 * @namespace wp
@@ -47,7 +49,8 @@ if ( 'undefined' === typeof window.wp.codeEditor ) {
 	 * @return {void}
 	 */
 	function configureLinting( editor, settings ) { // eslint-disable-line complexity
-		var currentErrorAnnotations = [], previouslyShownErrorAnnotations = [];
+		let currentErrorAnnotations = [];
+		let previouslyShownErrorAnnotations = [];
 
 		/**
 		 * Call the onUpdateErrorNotice if there are new errors to show.
@@ -67,7 +70,7 @@ if ( 'undefined' === typeof window.wp.codeEditor ) {
 		 * @return {Object} Lint options.
 		 */
 		function getLintOptions() { // eslint-disable-line complexity
-			var options = editor.getOption( 'lint' );
+			let options = editor.getOption( 'lint' );
 
 			if ( ! options ) {
 				return false;
@@ -113,7 +116,7 @@ if ( 'undefined' === typeof window.wp.codeEditor ) {
 			// Wrap the onUpdateLinting CodeMirror event to route to onChangeLintingErrors and onUpdateErrorNotice.
 			options.onUpdateLinting = (function( onUpdateLintingOverridden ) {
 				return function( annotations, annotationsSorted, cm ) {
-					var errorAnnotations = _.filter( annotations, function( annotation ) {
+					const errorAnnotations = _.filter( annotations, function( annotation ) {
 						return 'error' === annotation.severity;
 					} );
 
@@ -151,12 +154,12 @@ if ( 'undefined' === typeof window.wp.codeEditor ) {
 
 		// Keep lint options populated.
 		editor.on( 'optionChange', function( cm, option ) {
-			var options, gutters, gutterName = 'CodeMirror-lint-markers';
+			const gutterName = 'CodeMirror-lint-markers';
 			if ( 'lint' !== option ) {
 				return;
 			}
-			gutters = editor.getOption( 'gutters' ) || [];
-			options = editor.getOption( 'lint' );
+			const gutters = editor.getOption( 'gutters' ) || [];
+			const options = editor.getOption( 'lint' );
 			if ( true === options ) {
 				if ( ! _.contains( gutters, gutterName ) ) {
 					editor.setOption( 'gutters', [ gutterName ].concat( gutters ) );
@@ -183,7 +186,7 @@ if ( 'undefined' === typeof window.wp.codeEditor ) {
 			editor.off( 'blur', updateErrorNotice );
 		} );
 		editor.on( 'endCompletion', function() {
-			var editorRefocusWait = 500;
+			const editorRefocusWait = 500;
 			editor.on( 'blur', updateErrorNotice );
 
 			// Wait for editor to possibly get re-focused after selection.
@@ -221,13 +224,14 @@ if ( 'undefined' === typeof window.wp.codeEditor ) {
 	 * @return {void}
 	 */
 	function configureTabbing( codemirror, settings ) {
-		var $textarea = $( codemirror.getTextArea() );
+		const $textarea = $( codemirror.getTextArea() );
 
 		codemirror.on( 'blur', function() {
 			$textarea.data( 'next-tab-blurs', false );
 		});
 		codemirror.on( 'keydown', function onKeydown( editor, event ) {
-			var tabKeyCode = 9, escKeyCode = 27;
+			const tabKeyCode = 9;
+			const escKeyCode = 27;
 
 			// Take note of the ESC keypress so that the next TAB can focus outside the editor.
 			if ( escKeyCode === event.keyCode ) {
@@ -280,40 +284,41 @@ if ( 'undefined' === typeof window.wp.codeEditor ) {
 	 * @return {CodeEditorInstance} Instance.
 	 */
 	wp.codeEditor.initialize = function initialize( textarea, settings ) {
-		var $textarea, codemirror, instanceSettings, instance;
+		let $textarea;
 		if ( 'string' === typeof textarea ) {
 			$textarea = $( '#' + textarea );
 		} else {
 			$textarea = $( textarea );
 		}
 
-		instanceSettings = $.extend( {}, wp.codeEditor.defaultSettings, settings );
+		const instanceSettings = $.extend( {}, wp.codeEditor.defaultSettings, settings );
 		instanceSettings.codemirror = $.extend( {}, instanceSettings.codemirror );
 
-		codemirror = wp.CodeMirror.fromTextArea( $textarea[0], instanceSettings.codemirror );
+		const codemirror = wp.CodeMirror.fromTextArea( $textarea[0], instanceSettings.codemirror );
 
 		configureLinting( codemirror, instanceSettings );
 
-		instance = {
+		const instance = {
 			settings: instanceSettings,
 			codemirror: codemirror
 		};
 
 		if ( codemirror.showHint ) {
 			codemirror.on( 'keyup', function( editor, event ) { // eslint-disable-line complexity
-				var shouldAutocomplete, isAlphaKey = /^[a-zA-Z]$/.test( event.key ), lineBeforeCursor, innerMode, token;
+				const isAlphaKey = /^[a-zA-Z]$/.test( event.key );
 				if ( codemirror.state.completionActive && isAlphaKey ) {
 					return;
 				}
 
 				// Prevent autocompletion in string literals or comments.
-				token = codemirror.getTokenAt( codemirror.getCursor() );
+				const token = codemirror.getTokenAt( codemirror.getCursor() );
 				if ( 'string' === token.type || 'comment' === token.type ) {
 					return;
 				}
 
-				innerMode = wp.CodeMirror.innerMode( codemirror.getMode(), token.state ).mode.name;
-				lineBeforeCursor = codemirror.doc.getLine( codemirror.doc.getCursor().line ).substr( 0, codemirror.doc.getCursor().ch );
+				const innerMode = wp.CodeMirror.innerMode( codemirror.getMode(), token.state ).mode.name;
+				const lineBeforeCursor = codemirror.doc.getLine( codemirror.doc.getCursor().line ).substr( 0, codemirror.doc.getCursor().ch );
+				let shouldAutocomplete;
 				if ( 'html' === innerMode || 'xml' === innerMode ) {
 					shouldAutocomplete =
 						'<' === event.key ||
