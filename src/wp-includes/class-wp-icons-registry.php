@@ -10,23 +10,23 @@
 /**
  * Core class used for interacting with registered icons.
  *
+ * @phpstan-type Icon array{ name: string, label: string, content?: string, filePath?: string }
+ *
  * @since 7.0.0
  */
 class WP_Icons_Registry {
 	/**
 	 * Registered icons array.
 	 *
-	 * @var array[]
+	 * @phpstan-var array<string, Icon>
+	 * @var array<string, array>
 	 */
-	private $registered_icons = array();
-
+	private array $registered_icons = array();
 
 	/**
 	 * Container for the main instance of the class.
-	 *
-	 * @var WP_Icons_Registry|null
 	 */
-	private static $instance = null;
+	private static ?WP_Icons_Registry $instance = null;
 
 	/**
 	 * Constructor.
@@ -89,8 +89,8 @@ class WP_Icons_Registry {
 	/**
 	 * Registers an icon.
 	 *
-	 * @param string $icon_name       Icon name including namespace.
-	 * @param array  $icon_properties {
+	 * @param string                $icon_name       Icon name including namespace.
+	 * @param array<string, string> $icon_properties {
 	 *     List of properties for the icon.
 	 *
 	 *     @type string $label    Required. A human-readable label for the icon.
@@ -99,9 +99,10 @@ class WP_Icons_Registry {
 	 *                            If both `content` and `filePath` are not set, the icon will not be registered.
 	 *     @type string $filePath Optional. The full path to the file containing the icon content.
 	 * }
+	 * @phpstan-param array{ label: string, content?: string, filePath?: string } $icon_properties
 	 * @return bool True if the icon was registered with success and false otherwise.
 	 */
-	private function register( $icon_name, $icon_properties ) {
+	private function register( $icon_name, array $icon_properties ): bool {
 		if ( ! isset( $icon_name ) || ! is_string( $icon_name ) ) {
 			_doing_it_wrong(
 				__METHOD__,
@@ -183,12 +184,12 @@ class WP_Icons_Registry {
 	 * Sanitizes the icon SVG content.
 	 *
 	 * Logic borrowed from twentytwenty.
-	 * @see twentytwenty_get_theme_svg
+	 * @see twentytwenty_get_theme_svg()
 	 *
 	 * @param string $icon_content The icon SVG content to sanitize.
 	 * @return string The sanitized icon SVG content.
 	 */
-	private function sanitize_icon_content( $icon_content ) {
+	private function sanitize_icon_content( string $icon_content ): string {
 		$allowed_tags = array(
 			'svg'     => array(
 				'class'       => true,
@@ -223,12 +224,17 @@ class WP_Icons_Registry {
 	 * @param string $icon_name Icon name including namespace.
 	 * @return string|null The content of the icon, if found.
 	 */
-	private function get_content( $icon_name ) {
-		if ( ! isset( $this->registered_icons[ $icon_name ]['content'] ) ) {
+	private function get_content( string $icon_name ): ?string {
+		if ( isset( $this->registered_icons[ $icon_name ]['content'] ) ) {
+			return $this->registered_icons[ $icon_name ]['content'];
+		}
+		if ( isset( $this->registered_icons[ $icon_name ]['filePath'] ) ) {
 			$content = file_get_contents(
 				$this->registered_icons[ $icon_name ]['filePath']
 			);
-			$content = $this->sanitize_icon_content( $content );
+			if ( false !== $content ) {
+				$content = $this->sanitize_icon_content( $content );
+			}
 
 			if ( empty( $content ) ) {
 				wp_trigger_error(
@@ -240,23 +246,26 @@ class WP_Icons_Registry {
 
 			$this->registered_icons[ $icon_name ]['content'] = $content;
 		}
-		return $this->registered_icons[ $icon_name ]['content'];
+		return null;
 	}
 
 	/**
 	 * Retrieves an array containing the properties of a registered icon.
 	 *
-	 *
 	 * @param string $icon_name Icon name including namespace.
-	 * @return array|null Registered icon properties or `null` if the icon is not registered.
+	 * @return array<string, mixed>|null Registered icon properties or `null` if the icon is not registered.
+	 * @phpstan-return Icon|null
 	 */
-	public function get_registered_icon( $icon_name ) {
+	public function get_registered_icon( string $icon_name ): ?array {
 		if ( ! $this->is_registered( $icon_name ) ) {
 			return null;
 		}
 
-		$icon            = $this->registered_icons[ $icon_name ];
-		$icon['content'] = $icon['content'] ?? $this->get_content( $icon_name );
+		$icon              = $this->registered_icons[ $icon_name ];
+		$icon['content'] ??= $this->get_content( $icon_name );
+		if ( null === $icon['content'] ) {
+			return null;
+		}
 
 		return $icon;
 	}
@@ -265,9 +274,10 @@ class WP_Icons_Registry {
 	 * Retrieves all registered icons.
 	 *
 	 * @param string $search Optional. Search term by which to filter the icons.
-	 * @return array[] Array of arrays containing the registered icon properties.
+	 * @return array<array<string, mixed>> Array of arrays containing the registered icon properties.
+	 * @phpstan-return array<int, Icon>
 	 */
-	public function get_registered_icons( $search = '' ) {
+	public function get_registered_icons( string $search = '' ): array {
 		$icons = array();
 
 		foreach ( $this->registered_icons as $icon ) {
@@ -275,8 +285,10 @@ class WP_Icons_Registry {
 				continue;
 			}
 
-			$icon['content'] = $icon['content'] ?? $this->get_content( $icon['name'] );
-			$icons[]         = $icon;
+			$icon['content'] ??= $this->get_content( $icon['name'] );
+			if ( null !== $icon['content'] ) {
+				$icons[] = $icon;
+			}
 		}
 
 		return $icons;
@@ -289,7 +301,7 @@ class WP_Icons_Registry {
 	 * @param string $icon_name Icon name including namespace.
 	 * @return bool True if the icon is registered, false otherwise.
 	 */
-	public function is_registered( $icon_name ) {
+	public function is_registered( string $icon_name ): bool {
 		return isset( $this->registered_icons[ $icon_name ] );
 	}
 
@@ -298,10 +310,9 @@ class WP_Icons_Registry {
 	 *
 	 * The instance will be created if it does not exist yet.
 	 *
-	 *
 	 * @return WP_Icons_Registry The main instance.
 	 */
-	public static function get_instance() {
+	public static function get_instance(): WP_Icons_Registry {
 		if ( null === self::$instance ) {
 			self::$instance = new self();
 		}
