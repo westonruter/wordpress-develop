@@ -1640,6 +1640,7 @@ function get_post_type_object( $post_type ) {
  *                               element from the array needs to match; 'and' means all elements
  *                               must match; 'not' means no elements may match. Default 'and'.
  * @return string[]|WP_Post_Type[] An array of post type names or objects.
+ * @phpstan-return ( $output is 'names' ? string[] : WP_Post_Type[] )
  */
 function get_post_types( $args = array(), $output = 'names', $operator = 'and' ) {
 	global $wp_post_types;

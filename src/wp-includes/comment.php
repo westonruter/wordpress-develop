@@ -217,6 +217,10 @@ function get_approved_comments( $post_id, $args = array() ) {
  *                                       correspond to a WP_Comment object, an associative array, or a numeric array,
  *                                       respectively. Default OBJECT.
  * @return WP_Comment|array|null Depends on $output value.
+ * @phpstan-return (
+ *     $output is 'ARRAY_A' ? non-empty-array<string, mixed>
+ *                          : ( $output is 'ARRAY_N' ? non-empty-array<int, mixed>
+ *                                                   : WP_Comment|null ) )
  */
 function get_comment( $comment = null, $output = OBJECT ) {
 	if ( empty( $comment ) && isset( $GLOBALS['comment'] ) ) {
