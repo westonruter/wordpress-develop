@@ -633,7 +633,7 @@ class WP_Token_Map {
 	 *         ':?' => '😕',
 	 *     );
 	 *
-	 * @return array The lookup key/substitution values as an associate array.
+	 * @return array<string, string> The lookup key/substitution values as an associate array.
 	 */
 	public function to_array(): array {
 		$tokens = array();

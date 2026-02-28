@@ -180,7 +180,7 @@ class WP_HTTP_Requests_Response extends WP_HTTP_Response {
 	 *
 	 * @since 4.6.0
 	 *
-	 * @return array WP_Http response array, per WP_Http::request().
+	 * @return array<string, mixed> WP_Http response array, per WP_Http::request().
 	 */
 	public function to_array() {
 		return array(

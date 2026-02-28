@@ -372,7 +372,7 @@ final class WP_Post {
 	 *
 	 * @since 3.5.0
 	 *
-	 * @return array Object as array.
+	 * @return array<string, mixed> Object as array.
 	 */
 	public function to_array() {
 		$post = get_object_vars( $this );

@@ -439,7 +439,7 @@ class WP_User {
 	 *
 	 * @since 3.5.0
 	 *
-	 * @return array Array representation.
+	 * @return array<string, mixed> Array representation.
 	 */
 	public function to_array() {
 		return get_object_vars( $this->data );
