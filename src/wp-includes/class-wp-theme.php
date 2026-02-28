@@ -868,11 +868,9 @@ final class WP_Theme implements ArrayAccess {
 	 * @return string|array|false String or array (for Tags header) on success, false on failure.
 	 *
 	 * @phpstan-return (
-	 *     $header is 'Tags'
-	 *         ? string[]|false
-	 *         : ( $header is 'Name'|'ThemeURI'|'Description'|'Author'|'AuthorURI'|'Version'|'Template'|'Status'|'TextDomain'|'DomainPath'|'RequiresWP'|'RequiresPHP'|'UpdateURI'
-	 *             ? string|false
-	 *             : false )
+	 *     $header is 'Tags' ? string[]|false : (
+	 *         $header is 'Name'|'ThemeURI'|'Description'|'Author'|'AuthorURI'|'Version'|'Template'|'Status'|'TextDomain'|'DomainPath'|'RequiresWP'|'RequiresPHP'|'UpdateURI' ? string|false : false
+	 *     )
 	 * )
 	 */
 	public function get( $header ) {

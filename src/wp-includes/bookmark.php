@@ -330,6 +330,11 @@ function get_bookmarks( $args = '' ) {
  * @param stdClass|array $bookmark Bookmark row.
  * @param string         $context  Optional. How to filter the fields. Default 'display'.
  * @return stdClass|array Same type as $bookmark but with fields sanitized.
+ * @phpstan-return (
+ *     $bookmark is array ? array<string, mixed> : (
+ *         $bookmark is object ? object : mixed
+ *     )
+ * )
  */
 function sanitize_bookmark( $bookmark, $context = 'display' ) {
 	$fields = array(

@@ -1145,6 +1145,11 @@ function get_extended( $post ) {
  *                                 or 'display'. Default 'raw'.
  * @return WP_Post|array|null Type corresponding to $output on success or null on failure.
  *                            When $output is OBJECT, a `WP_Post` instance is returned.
+ * @phpstan-return (
+ *     $output is 'ARRAY_A' ? array<string, mixed>|null : (
+ *         $output is 'ARRAY_N' ? array<int, mixed>|null : WP_Post|null
+ *     )
+ * )
  */
 function get_post( $post = null, $output = OBJECT, $filter = 'raw' ) {
 	if ( empty( $post ) && isset( $GLOBALS['post'] ) ) {
@@ -2947,6 +2952,13 @@ function is_sticky( $post_id = 0 ) {
  *                                      'attribute', or 'js'. Default 'display'.
  * @return object|WP_Post|array The now sanitized post object or array (will be the
  *                              same type as `$post`).
+ * @phpstan-return (
+ *     $post is WP_Post ? WP_Post : (
+ *         $post is array ? array<string, mixed> : (
+ *             $post is object ? object : mixed
+ *         )
+ *     )
+ * )
  */
 function sanitize_post( $post, $context = 'display' ) {
 	if ( is_object( $post ) ) {
