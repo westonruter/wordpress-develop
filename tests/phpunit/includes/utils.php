@@ -58,15 +58,32 @@ function strip_ws( $txt ) {
  *     add_action( 'foo', array( &$ma, 'action' ) );
  *
  * @since UT (3.7.0)
+ *
+ * @phpstan-type Event array{
+ *     action?: string,
+ *     filter?: string,
+ *     hook_name: string|false,
+ *     tag: string|false,
+ *     args: mixed[],
+ * }
  */
 class MockAction {
+	/**
+	 * @var list<Event>
+	 */
 	public $events;
+
+	/**
+	 * @var int
+	 */
 	public $debug;
 
 	/**
 	 * PHP5 constructor.
 	 *
 	 * @since UT (3.7.0)
+	 *
+	 * @param int|bool $debug
 	 */
 	public function __construct( $debug = 0 ) {
 		$this->reset();
@@ -76,12 +93,16 @@ class MockAction {
 	/**
 	 * @since UT (3.7.0)
 	 */
-	public function reset() {
+	public function reset(): void {
 		$this->events = array();
 	}
 
 	/**
 	 * @since UT (3.7.0)
+	 *
+	 * @global array<string, int> $wp_actions
+	 *
+	 * @return string|false
 	 */
 	public function current_filter() {
 		global $wp_actions;
@@ -95,6 +116,9 @@ class MockAction {
 
 	/**
 	 * @since UT (3.7.0)
+	 *
+	 * @param mixed $arg
+	 * @return mixed
 	 */
 	public function action( $arg ) {
 		$current_filter = $this->current_filter();
@@ -115,6 +139,9 @@ class MockAction {
 
 	/**
 	 * @since UT (3.7.0)
+	 *
+	 * @param mixed $arg
+	 * @return mixed
 	 */
 	public function action2( $arg ) {
 		$current_filter = $this->current_filter();
@@ -135,6 +162,9 @@ class MockAction {
 
 	/**
 	 * @since UT (3.7.0)
+	 *
+	 * @param mixed $arg
+	 * @return mixed
 	 */
 	public function filter( $arg ) {
 		$current_filter = $this->current_filter();
@@ -155,6 +185,9 @@ class MockAction {
 
 	/**
 	 * @since UT (3.7.0)
+	 *
+	 * @param mixed $arg
+	 * @return mixed
 	 */
 	public function filter2( $arg ) {
 		$current_filter = $this->current_filter();
@@ -175,8 +208,10 @@ class MockAction {
 
 	/**
 	 * @since UT (3.7.0)
+	 *
+	 * @param string $arg
 	 */
-	public function filter_append( $arg ) {
+	public function filter_append( $arg ): string {
 		$current_filter = $this->current_filter();
 
 		if ( $this->debug ) {
@@ -197,8 +232,11 @@ class MockAction {
 	 * Does not return the result, so it's safe to use with the 'all' filter.
 	 *
 	 * @since UT (3.7.0)
+	 *
+	 * @param string $hook_name
+	 * @param mixed[] $args
 	 */
-	public function filterall( $hook_name, ...$args ) {
+	public function filterall( string $hook_name, ...$args ): void {
 		$current_filter = $this->current_filter();
 
 		if ( $this->debug ) {
@@ -217,8 +255,10 @@ class MockAction {
 	 * Returns a list of all the actions, hook names and args.
 	 *
 	 * @since UT (3.7.0)
+	 *
+	 * @return list<Event>
 	 */
-	public function get_events() {
+	public function get_events(): array {
 		return $this->events;
 	}
 
@@ -227,12 +267,12 @@ class MockAction {
 	 *
 	 * @since UT (3.7.0)
 	 */
-	public function get_call_count( $hook_name = '' ) {
+	public function get_call_count( string $hook_name = '' ): int {
 		if ( $hook_name ) {
 			$count = 0;
 
 			foreach ( $this->events as $e ) {
-				if ( $e['action'] === $hook_name ) {
+				if ( isset( $e['action'] ) && $e['action'] === $hook_name ) {
 					++$count;
 				}
 			}
@@ -247,8 +287,10 @@ class MockAction {
 	 * Returns an array of the hook names that triggered calls to this action.
 	 *
 	 * @since 6.1.0
+	 *
+	 * @return list<string|false>
 	 */
-	public function get_hook_names() {
+	public function get_hook_names(): array {
 		$out = array();
 
 		foreach ( $this->events as $e ) {
@@ -263,8 +305,10 @@ class MockAction {
 	 *
 	 * @since UT (3.7.0)
 	 * @since 6.1.0 Turned into an alias for ::get_hook_names().
+	 *
+	 * @return list<string|false>
 	 */
-	public function get_tags() {
+	public function get_tags(): array {
 		return $this->get_hook_names();
 	}
 
@@ -272,8 +316,10 @@ class MockAction {
 	 * Returns an array of args passed in calls to this action.
 	 *
 	 * @since UT (3.7.0)
+	 *
+	 * @return mixed[]
 	 */
-	public function get_args() {
+	public function get_args(): array {
 		$out = array();
 
 		foreach ( $this->events as $e ) {
