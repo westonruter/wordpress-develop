@@ -22,6 +22,7 @@ final class WP_Comment {
 	 *
 	 * @since 4.4.0
 	 * @var string
+	 * @phpstan-var numeric-string
 	 */
 	public $comment_ID;
 
@@ -32,6 +33,7 @@ final class WP_Comment {
 	 *
 	 * @since 4.4.0
 	 * @var string
+	 * @phpstan-var numeric-string
 	 */
 	public $comment_post_ID = '0';
 
@@ -98,6 +100,7 @@ final class WP_Comment {
 	 *
 	 * @since 4.4.0
 	 * @var string
+	 * @phpstan-var numeric-string
 	 */
 	public $comment_karma = '0';
 
@@ -133,6 +136,7 @@ final class WP_Comment {
 	 *
 	 * @since 4.4.0
 	 * @var string
+	 * @phpstan-var numeric-string
 	 */
 	public $comment_parent = '0';
 
@@ -181,6 +185,7 @@ final class WP_Comment {
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 *
 	 * @param int $id Comment ID.
+	 * @phpstan-param int|numeric-string $id
 	 * @return WP_Comment|false Comment object, otherwise false.
 	 */
 	public static function get_instance( $id ) {
