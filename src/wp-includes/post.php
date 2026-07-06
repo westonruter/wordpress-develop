@@ -1136,12 +1136,14 @@ function get_post( $post = null, $output = OBJECT, $filter = 'raw' ) {
 		} elseif ( 'raw' === $post->filter ) {
 			$_post = new WP_Post( $post );
 		} elseif ( isset( $post->ID ) ) {
-			$_post = WP_Post::get_instance( $post->ID );
+			$_post = WP_Post::get_instance( (int) $post->ID );
 		} else {
 			$_post = null;
 		}
+	} elseif ( is_numeric( $post ) ) {
+		$_post = WP_Post::get_instance( (int) $post );
 	} else {
-		$_post = WP_Post::get_instance( $post );
+		$_post = null;
 	}
 
 	if ( ! $_post ) {
