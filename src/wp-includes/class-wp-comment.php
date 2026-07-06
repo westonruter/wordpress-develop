@@ -143,14 +143,17 @@ final class WP_Comment {
 	 *
 	 * @since 4.4.0
 	 * @var string
+	 * @phpstan-var numeric-string
 	 */
 	public $user_id = '0';
 
 	/**
 	 * Comment children.
 	 *
+	 * Mapping of comment ID to WP_Comment object.
+	 *
 	 * @since 4.4.0
-	 * @var array
+	 * @var array<numeric-string, WP_Comment>
 	 */
 	protected $children;
 
@@ -264,7 +267,16 @@ final class WP_Comment {
 	 *                                 `$meta_query`. Also accepts false, an empty array, or
 	 *                                 'none' to disable `ORDER BY` clause.
 	 * }
-	 * @return WP_Comment[] Array of `WP_Comment` objects.
+	 * @return array Array of `WP_Comment` objects.
+	 *
+	 * @phpstan-param array{
+	 *                    format?: 'tree'|'flat',
+	 *                    status?: 'hold'|'approve'|'all'|string,
+	 *                    hierarchical?: 'threaded'|'flat'|false,
+	 *                    orderby?: string|string[]|false,
+	 *                    ...
+	 *                } $args
+	 * @phpstan-return array<numeric-string, WP_Comment>
 	 */
 	public function get_children( $args = array() ) {
 		$defaults = array(
@@ -281,7 +293,9 @@ final class WP_Comment {
 			if ( $this->populated_children ) {
 				$this->children = array();
 			} else {
-				$this->children = get_comments( $_args );
+				// TODO: If $args is array{ fields: 'ids' } then this breaks.
+				$child_comments = get_comments( $_args );
+				$this->children = $child_comments;
 			}
 		}
 

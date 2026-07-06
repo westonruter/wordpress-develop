@@ -360,7 +360,7 @@ class WP_Comment_Query {
 	 *
 	 * @param string|array $query Array or URL query string of parameters.
 	 * @return WP_Comment[]|int[]|int List of comments, or number of comments when 'count' is passed as a query var.
-	 * @phpstan-return WP_Comment[]|int[]|non-negative-int
+	 * @phpstan-return array<numeric-string, WP_Comment>|WP_Comment[]|int[]|non-negative-int
 	 */
 	public function query( $query ) {
 		$this->query_vars = wp_parse_args( $query );
@@ -375,6 +375,7 @@ class WP_Comment_Query {
 	 * @global wpdb $wpdb WordPress database abstraction object.
 	 *
 	 * @return int|int[]|WP_Comment[] List of comments or number of found comments if `$count` argument is true.
+	 * @phpstan-return array<numeric-string, WP_Comment>|WP_Comment[]|int[]|non-negative-int
 	 */
 	public function get_comments() {
 		global $wpdb;

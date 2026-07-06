@@ -275,7 +275,9 @@ function get_comment( $comment = null, $output = OBJECT ) {
  * @return WP_Comment[]|int[]|int List of comments or number of found comments if `$count` argument is true.
  * @phpstan-return (
  *     $args is array{ count: true, ... } ? non-negative-int : (
- *         $args is array{ fields: 'ids', ... } ? int[] : WP_Comment[]
+ *         $args is array{ fields: 'ids', ... } ? int[] : (
+ *             $args is array{ hierarchical: 'threaded', ... } ? array<numeric-string, WP_Comment> : WP_Comment[]
+ *         )
  *     )
  * )
  */
