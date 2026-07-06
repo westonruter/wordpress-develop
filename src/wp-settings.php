@@ -112,6 +112,7 @@ wp_set_lang_dir();
 require ABSPATH . WPINC . '/class-wp-list-util.php';
 require ABSPATH . WPINC . '/class-wp-token-map.php';
 require ABSPATH . WPINC . '/utf8.php';
+require ABSPATH . WPINC . '/class-wp-email-address.php';
 require ABSPATH . WPINC . '/formatting.php';
 require ABSPATH . WPINC . '/meta.php';
 require ABSPATH . WPINC . '/functions.php';
@@ -204,6 +205,7 @@ require ABSPATH . WPINC . '/block-template.php';
 require ABSPATH . WPINC . '/theme-templates.php';
 require ABSPATH . WPINC . '/theme-previews.php';
 require ABSPATH . WPINC . '/template.php';
+require ABSPATH . WPINC . '/view-config.php';
 require ABSPATH . WPINC . '/https-detection.php';
 require ABSPATH . WPINC . '/https-migration.php';
 require ABSPATH . WPINC . '/class-wp-user-request.php';
@@ -286,6 +288,16 @@ require ABSPATH . WPINC . '/class-wp-http-encoding.php';
 require ABSPATH . WPINC . '/class-wp-http-response.php';
 require ABSPATH . WPINC . '/class-wp-http-requests-response.php';
 require ABSPATH . WPINC . '/class-wp-http-requests-hooks.php';
+require ABSPATH . WPINC . '/php-ai-client/autoload.php';
+require ABSPATH . WPINC . '/ai-client/adapters/class-wp-ai-client-http-client.php';
+require ABSPATH . WPINC . '/ai-client/adapters/class-wp-ai-client-cache.php';
+require ABSPATH . WPINC . '/ai-client/adapters/class-wp-ai-client-discovery-strategy.php';
+require ABSPATH . WPINC . '/ai-client/adapters/class-wp-ai-client-event-dispatcher.php';
+require ABSPATH . WPINC . '/ai-client/class-wp-ai-client-ability-function-resolver.php';
+require ABSPATH . WPINC . '/ai-client/class-wp-ai-client-prompt-builder.php';
+require ABSPATH . WPINC . '/ai-client.php';
+require ABSPATH . WPINC . '/class-wp-connector-registry.php';
+require ABSPATH . WPINC . '/connectors.php';
 require ABSPATH . WPINC . '/class-wp-icons-registry.php';
 require ABSPATH . WPINC . '/widgets.php';
 require ABSPATH . WPINC . '/class-wp-widget.php';
@@ -301,6 +313,7 @@ require ABSPATH . WPINC . '/abilities-api/class-wp-abilities-registry.php';
 require ABSPATH . WPINC . '/abilities-api.php';
 require ABSPATH . WPINC . '/abilities.php';
 require ABSPATH . WPINC . '/rest-api.php';
+require ABSPATH . WPINC . '/json-schema.php';
 require ABSPATH . WPINC . '/rest-api/class-wp-rest-server.php';
 require ABSPATH . WPINC . '/rest-api/class-wp-rest-response.php';
 require ABSPATH . WPINC . '/rest-api/class-wp-rest-request.php';
@@ -346,6 +359,7 @@ require ABSPATH . WPINC . '/rest-api/endpoints/class-wp-rest-font-families-contr
 require ABSPATH . WPINC . '/rest-api/endpoints/class-wp-rest-font-faces-controller.php';
 require ABSPATH . WPINC . '/rest-api/endpoints/class-wp-rest-font-collections-controller.php';
 require ABSPATH . WPINC . '/rest-api/endpoints/class-wp-rest-icons-controller.php';
+require ABSPATH . WPINC . '/rest-api/endpoints/class-wp-rest-view-config-controller.php';
 require ABSPATH . WPINC . '/rest-api/endpoints/class-wp-rest-abilities-v1-categories-controller.php';
 require ABSPATH . WPINC . '/rest-api/endpoints/class-wp-rest-abilities-v1-list-controller.php';
 require ABSPATH . WPINC . '/rest-api/endpoints/class-wp-rest-abilities-v1-run-controller.php';
@@ -416,6 +430,7 @@ require ABSPATH . WPINC . '/block-supports/aria-label.php';
 require ABSPATH . WPINC . '/block-supports/anchor.php';
 require ABSPATH . WPINC . '/block-supports/block-visibility.php';
 require ABSPATH . WPINC . '/block-supports/custom-css.php';
+require ABSPATH . WPINC . '/block-supports/states.php';
 require ABSPATH . WPINC . '/style-engine.php';
 require ABSPATH . WPINC . '/style-engine/class-wp-style-engine.php';
 require ABSPATH . WPINC . '/style-engine/class-wp-style-engine-css-declarations.php';
@@ -460,6 +475,11 @@ $GLOBALS['wp_embed'] = new WP_Embed();
  */
 $GLOBALS['wp_textdomain_registry'] = new WP_Textdomain_Registry();
 $GLOBALS['wp_textdomain_registry']->init();
+
+// WordPress AI Client initialization.
+WP_AI_Client_Discovery_Strategy::init();
+WordPress\AiClient\AiClient::setCache( new WP_AI_Client_Cache() );
+WordPress\AiClient\AiClient::setEventDispatcher( new WP_AI_Client_Event_Dispatcher() );
 
 // Load multisite-specific files.
 if ( is_multisite() ) {
