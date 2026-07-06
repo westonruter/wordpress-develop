@@ -2925,6 +2925,12 @@ function is_sticky( $post_id = 0 ) {
  *                                      'attribute', or 'js'. Default 'display'.
  * @return object|WP_Post|array The now sanitized post object or array (will be the
  *                              same type as `$post`).
+ *
+ * @phpstan-return (
+ *     $post is WP_Post ? WP_Post : (
+ *         $post is object ? object : array
+ *     )
+ * )
  */
 function sanitize_post( $post, $context = 'display' ) {
 	if ( is_object( $post ) ) {
