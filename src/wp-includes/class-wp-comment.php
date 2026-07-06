@@ -173,7 +173,7 @@ final class WP_Comment {
 	 * Post fields.
 	 *
 	 * @since 4.4.0
-	 * @var array
+	 * @var string[]
 	 */
 	protected $post_fields = array( 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count' );
 
@@ -232,7 +232,7 @@ final class WP_Comment {
 	 * @since 4.4.0
 	 *
 	 * @return array Object as array.
-	 * @phpstan-return non-empty-array<string, mixed>
+	 * @phpstan-return array<mixed>
 	 */
 	public function to_array() {
 		return get_object_vars( $this );
@@ -329,6 +329,7 @@ final class WP_Comment {
 	 * @since 4.4.0
 	 *
 	 * @param WP_Comment $child Child comment.
+	 * @return void
 	 */
 	public function add_child( WP_Comment $child ) {
 		$this->children[ $child->comment_ID ] = $child;
