@@ -273,6 +273,11 @@ function get_comment( $comment = null, $output = OBJECT ) {
  * @param string|array $args Optional. Array or string of arguments. See WP_Comment_Query::__construct()
  *                           for information on accepted arguments. Default empty string.
  * @return WP_Comment[]|int[]|int List of comments or number of found comments if `$count` argument is true.
+ * @phpstan-return (
+ *     $args is array{ count: true, ... } ? non-negative-int : (
+ *         $args is array{ fields: 'ids', ... } ? int[] : WP_Comment[]
+ *     )
+ * )
  */
 function get_comments( $args = '' ) {
 	$query = new WP_Comment_Query();
