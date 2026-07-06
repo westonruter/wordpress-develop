@@ -395,5 +395,6 @@ final class WP_Comment {
 			$post = get_post( $this->comment_post_ID );
 			return $post->$name;
 		}
+		return null;
 	}
 }
