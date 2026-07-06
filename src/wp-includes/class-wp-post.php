@@ -230,6 +230,8 @@ final class WP_Post {
 	 *
 	 * @param int $post_id Post ID.
 	 * @return WP_Post|false Post object, false otherwise.
+	 *
+	 * @phpstan-param int|numeric-string $post_id
 	 */
 	public static function get_instance( $post_id ) {
 		global $wpdb;
