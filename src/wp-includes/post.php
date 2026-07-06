@@ -2942,7 +2942,7 @@ function sanitize_post( $post, $context = 'display' ) {
 			$post->ID = 0;
 		}
 		foreach ( array_keys( get_object_vars( $post ) ) as $field ) {
-			$post->$field = sanitize_post_field( $field, $post->$field, $post->ID, $context );
+			$post->$field = sanitize_post_field( $field, $post->$field, (int) $post->ID, $context );
 		}
 		$post->filter = $context;
 	} elseif ( is_array( $post ) ) {
@@ -2954,7 +2954,7 @@ function sanitize_post( $post, $context = 'display' ) {
 			$post['ID'] = 0;
 		}
 		foreach ( array_keys( $post ) as $field ) {
-			$post[ $field ] = sanitize_post_field( $field, $post[ $field ], $post['ID'], $context );
+			$post[ $field ] = sanitize_post_field( $field, $post[ $field ], (int) $post['ID'], $context );
 		}
 		$post['filter'] = $context;
 	}
