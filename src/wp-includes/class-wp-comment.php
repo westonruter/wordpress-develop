@@ -373,8 +373,8 @@ final class WP_Comment {
 	 */
 	public function __isset( $name ) {
 		if ( in_array( $name, $this->post_fields, true ) && 0 !== (int) $this->comment_post_ID ) {
-			$post = get_post( $this->comment_post_ID );
-			return property_exists( $post, $name );
+			$post = get_post( (int) $this->comment_post_ID );
+			return $post && property_exists( $post, $name );
 		}
 
 		return false;
