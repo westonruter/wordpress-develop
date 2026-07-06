@@ -231,8 +231,10 @@ function get_comment( $comment = null, $output = OBJECT ) {
 		$_comment = $comment;
 	} elseif ( is_object( $comment ) ) {
 		$_comment = new WP_Comment( $comment );
+	} elseif ( is_numeric( $comment ) ) {
+		$_comment = WP_Comment::get_instance( (int) $comment );
 	} else {
-		$_comment = WP_Comment::get_instance( $comment );
+		$_comment = null;
 	}
 
 	if ( ! $_comment ) {
