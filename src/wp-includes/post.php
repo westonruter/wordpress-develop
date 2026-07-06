@@ -2926,9 +2926,10 @@ function is_sticky( $post_id = 0 ) {
  * @return object|WP_Post|array The now sanitized post object or array (will be the
  *                              same type as `$post`).
  *
+ * @phpstan-param object|WP_Post|array<string, mixed> $post
  * @phpstan-return (
  *     $post is WP_Post ? WP_Post : (
- *         $post is object ? object : array
+ *         $post is object ? object : array<string, mixed>
  *     )
  * )
  */
