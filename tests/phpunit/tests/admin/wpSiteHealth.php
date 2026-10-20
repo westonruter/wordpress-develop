@@ -691,6 +691,10 @@ class Tests_Admin_wpSiteHealth extends WP_UnitTestCase {
 	 * @covers ::get_test_opcode_cache()
 	 */
 	public function test_get_test_opcode_cache_result_by_environment() {
+		if ( ini_get( 'opcache.file_cache_only' ) ) {
+			$this->markTestSkipped( 'File cache only mode is covered separately.' );
+		}
+
 		$result = $this->instance->get_test_opcode_cache();
 
 		$opcache_enabled = false;
@@ -713,5 +717,28 @@ class Tests_Admin_wpSiteHealth extends WP_UnitTestCase {
 			$this->assertSame( __( 'Opcode cache is not enabled' ), $result['label'] );
 			$this->assertStringContainsString( __( 'Enabling this cache can significantly improve the performance of your site.' ), $result['description'] );
 		}
+	}
+
+	/**
+	 * File cache only mode caches bytecode without enabling shared memory.
+	 *
+	 * @ticket 64707
+	 * @covers ::get_test_opcode_cache()
+	 */
+	public function test_get_test_opcode_cache_with_file_cache_only() {
+		if ( ! function_exists( 'opcache_get_status' ) ) {
+			$this->markTestSkipped( 'The OPcache status function is required.' );
+		}
+
+		$status = opcache_get_status( false );
+		if ( ! is_array( $status ) || empty( $status['file_cache_only'] ) ) {
+			$this->markTestSkipped( 'Requires OPcache with opcache.file_cache_only=1 and a writable file cache.' );
+		}
+
+		$this->assertFalse( $status['opcache_enabled'], 'Shared memory must be disabled for this regression test.' );
+
+		$result = $this->instance->get_test_opcode_cache();
+		$this->assertSame( 'good', $result['status'] );
+		$this->assertSame( __( 'Opcode cache is enabled' ), $result['label'] );
 	}
 }
