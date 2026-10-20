@@ -467,10 +467,13 @@ class WP_Debug_Data {
 			: false;
 
 		if ( is_array( $opcache_status ) ) {
+			// In file cache only mode, the shared memory is not used, so `opcache_enabled` is false.
+			$opcache_enabled = $opcache_status['opcache_enabled'] || ! empty( $opcache_status['file_cache_only'] );
+
 			$fields['opcode_cache'] = array(
 				'label' => __( 'Opcode cache' ),
-				'value' => $opcache_status['opcache_enabled'] ? __( 'Enabled' ) : __( 'Disabled' ),
-				'debug' => $opcache_status['opcache_enabled'],
+				'value' => $opcache_enabled ? __( 'Enabled' ) : __( 'Disabled' ),
+				'debug' => $opcache_enabled,
 			);
 
 			if ( true === $opcache_status['opcache_enabled'] ) {
