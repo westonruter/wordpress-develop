@@ -4739,10 +4739,12 @@ function wp_send_json_error( $value = null, $status_code = null, $flags = 0 ) {
  *
  * @since 4.6.0
  *
- * @param string $callback Supplied JSONP callback function name.
+ * @param mixed $callback Supplied JSONP callback function name.
  * @return bool Whether the callback function name is valid.
+ *
+ * @phpstan-assert-if-true =non-falsy-string $callback
  */
-function wp_check_jsonp_callback( $callback ) {
+function wp_check_jsonp_callback( $callback ): bool {
 	if ( ! is_string( $callback ) ) {
 		return false;
 	}
